@@ -15,34 +15,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // load in the three data files
     let hdbResponse = await axios.get("https://gist.githubusercontent.com/kunxin-chor/a5f5cab3e8a6ad0868134334c1432d9a/raw/ca55e99903d5913fc0e701ddab139472fe7fe4fa/hdb.json");
-    
-    for (let hdb of hdbResponse.data) {
-        let marker = L.marker(hdb.coordinates)
-        marker.bindPopup(`<h1>${hdb.name}</h1>`);
-        marker.addTo(hdbLayerGroup);
-    }
+    addMarkersToLayerGroup(hdbResponse.data, hdbLayerGroup);
 
     // load 
     let mallLayerGroup = L.layerGroup();
     mallLayerGroup.addTo(singaporeMap);
 
     let mallResponse = await axios.get("https://gist.githubusercontent.com/kunxin-chor/a5f5cab3e8a6ad0868134334c1432d9a/raw/ca55e99903d5913fc0e701ddab139472fe7fe4fa/malls.json");
-    for (let mall of mallResponse.data) {
-        let marker = L.marker(mall.coordinates);
-        marker.bindPopup(`<h1>${mall.name}</h1>`);
-        marker.addTo(mallLayerGroup);
-    }
+    addMarkersToLayerGroup(mallResponse.data, mallLayerGroup);
 
     // nature.json
     let natureLayerGroup = L.layerGroup();
     natureLayerGroup.addTo(singaporeMap);
 
     let natureResponse = await axios.get("https://gist.githubusercontent.com/kunxin-chor/a5f5cab3e8a6ad0868134334c1432d9a/raw/ca55e99903d5913fc0e701ddab139472fe7fe4fa/nature.json");
-    for (let nature of natureResponse.data) {
-        let marker = L.marker(nature.coordinates);
-        marker.bindPopup(`<h1>${nature.name}</h1>`);
-        marker.addTo(natureLayerGroup);
-    }
+    addMarkersToLayerGroup(natureResponse.data, natureLayerGroup);
 
     let overlay = {
         "HDB": hdbLayerGroup,
@@ -53,4 +40,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     L.control.layers({}, overlay).addTo(singaporeMap);
 })
 
+function addMarkersToLayerGroup(data, layerGroup) {
+    for (let location of data) {
+        let marker = L.marker(location.coordinates);
+        marker.bindPopup(`<h1>${location.name}</h1>`);
+        marker.addTo(layerGroup);
+    }
+
+}
 
