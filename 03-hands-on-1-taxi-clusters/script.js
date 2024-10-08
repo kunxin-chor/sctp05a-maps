@@ -11,9 +11,27 @@ window.addEventListener("DOMContentLoaded", async function () {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(singaporeMap);
 
-    let response = await axios.get("https://api.data.gov.sg/v1/transport/taxi-availability");
-    console.log(response.data);
+    let markerClusterGroup = L.markerClusterGroup();
+    markerClusterGroup.addTo(singaporeMap);
 
+    drawMarkers(markerClusterGroup);
+
+    // setInterval to call the function in the first parameter
+    // after the interval
+    setInterval(async function () {
+        drawMarkers(markerClusterGroup);
+    }, 30000);
 })
+
+async function drawMarkers(clusterGroup) {
+    let response = await axios.get("https://api.data.gov.sg/v1/transport/taxi-availability");
+    
+    clusterGroup.clearLayers(); // remove all the existing layers in the group
+    for (let coordinates of response.data.features[0].geometry.coordinates) {
+        let latLng = [coordinates[1], coordinates[0]];
+        L.marker(latLng).addTo(clusterGroup);
+    }
+}
+
 
 
